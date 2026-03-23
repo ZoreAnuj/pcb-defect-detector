@@ -1,0 +1,30 @@
+wget  -O ./weights/yolov10s.pt  https://github.com/THU-MIG/yolov10/releases/download/v1.1/yolov10s.pt
+wget  -O ./yolov8n.pt  https://github.com/THU-MIG/yolov10/releases/download/v1.1/yolov8n.pt
+
+
+yolo task=detect mode=predict  save=True `
+model=C:/Users/10051/Desktop/yolov10-test/yolov10/runs/detect/train5/weights/best-tmp.pt  source=./data/01_Mouse_bite.bmp
+
+
+# 使用 Measure-Command 来测量训练所用的时间
+$duration = Measure-Command {`
+    # 执行 YOLOv5 训练命令`
+    yolo task=detect mode=train epochs=2 batch=16 plots=True `
+    model=weights/yolov10s.pt `
+    data=datasets/data.yaml`
+    device=0`
+}`
+# 输出训练所用的总时间`
+Write-Output "Training completed in $($duration.Hours) hours, $($duration.Minutes) minutes, $($duration.Seconds) seconds."
+
+# 检查GPU是否可用
+python -c "import torch; print(torch.cuda.is_available())"
+
+conda install pytorch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 pytorch-cuda=11.8 -c pytorch -c nvidia
+
+
+yolo task=detect mode=val model="path to your custom model" data="path to your data.yaml file" device=0
+yolo task=detect mode=val model="weights/best-A800.pt" data="C:\Users\10051\Desktop\yolov10-test\yolov10\datasets\pcb-defect-dataset/data.yaml" device=0
+    yolo task=detect mode=val model="C:/Users/10051/Desktop/yolov10-test/yolov10/runs/detect/train5/weights/best.pt" data="datasets/pcb-defect-dataset/data.yaml" conf=0.5 device=0
+
+
